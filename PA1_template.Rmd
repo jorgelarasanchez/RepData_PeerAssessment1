@@ -1,25 +1,86 @@
 ---
 title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
+author: "JLara"
+date: "15 de abril de 2017"
+keep_md: true
+output: html_document
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
-## Loading and preprocessing the data
+## Introduction
 
+It is now possible to collect a large amount of data about personal movement using activity monitoring devices such as a Fitbit, Nike Fuelband, or Jawbone Up. These type of devices are part of the "quantified self" movement - a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. But these data remain under-utilized both because the raw data are hard to obtain and there is a lack of statistical methods and software for processing and interpreting the data.
 
+This assignment makes use of data from a personal activity monitoring device. This device collects data at 5 minute intervals through out the day. The data consists of two months of data from an anonymous individual collected during the months of October and November, 2012 and include the number of steps taken in 5 minute intervals each day.
+
+The data for this assignment can be downloaded from the course web site:
+
+Dataset: Activity monitoring data [52K]
+The variables included in this dataset are:
+
+steps: Number of steps taking in a 5-minute interval (missing values are coded as NA)
+date: The date on which the measurement was taken in YYYY-MM-DD format
+interval: Identifier for the 5-minute interval in which measurement was taken
+The dataset is stored in a comma-separated-value (CSV) file and there are a total of 17,568 observations in this dataset.
+
+# Loading and preprocessing the data
+
+* Load the data
+
+```{r Load the data}
+fileURL <- 'https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip'
+dataFileZip <- "./repdata_Fdata_Factivity.zip"
+
+# Download the file
+if (file.exists(dataFileZip) == FALSE) {
+  download.file(fileURL,destfile=dataFileZip ,method="curl")
+  # Unzip the file
+  unzip(zipfile=dataFileZip ,exdir=".")
+}
+
+activity <- read.csv("activity.csv")
+```
+
+* Process/transform the data (if necessary) into a format suitable for your analysis
+
+```{r summary}
+summary(activity)
+```
+
+```{r str}
+str(activity)
+```
+
+We convert the "date" column of activity to the appropriate format
+
+```{r date}
+activity$date <- as.Date(activity$date, "%Y-%m-%d")
+```
 
 ## What is mean total number of steps taken per day?
+For this part of the assignment, you can ignore the missing values in the dataset.
 
+* 1.Calculate the total number of steps taken per day
 
+```{r total number of steps}
+steps_dates <- tapply(activity$steps, activity$date, sum,na.rm=TRUE)
+```
 
-## What is the average daily activity pattern?
+* 2.Make a histogram of the total number of steps taken each day
 
+```{r histogram}
+hist(steps_dates, xlab = 'Total steps per day', main = ' Total number of steps taken each day', col = 'red', breaks=10)
+```
 
+* 3.Calculate and report the mean and median of the total number of steps taken per day  
 
-## Imputing missing values
+```{r mean}
+mean(steps_dates)
+```
 
-
-
-## Are there differences in activity patterns between weekdays and weekends?
+```{r median}
+median(steps_dates)
+```
